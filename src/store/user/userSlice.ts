@@ -59,7 +59,10 @@ export const userSlice = createSlice({
     // Eliminar receta de favoritos
     builder
       .addCase(recipeboxDelete.fulfilled, (state, { payload }) => {
-        state.favoriteRecipes = payload.updatedFavorites; // Actualiza la lista de recetas favoritas en el estado global
+        // Eliminar la receta de los favoritos utilizando el recipeID
+        state.favoriteRecipes = state.favoriteRecipes.filter(
+          (recipe) => recipe.id !== payload.recipeID
+        );
       })
       .addCase(recipeboxDelete.rejected, (state, { payload }) => {
         state.error = payload

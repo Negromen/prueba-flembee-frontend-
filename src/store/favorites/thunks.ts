@@ -46,27 +46,28 @@ export const recipeboxRegister = createAsyncThunk(
 export const recipeboxDelete = createAsyncThunk(
   "/recipebox/delete",
   async (payload: RecipeBoxPayload, { rejectWithValue }) => {
-    const { ...laData } = payload;
+    const { userID, recipeID } = payload; // Obtenemos el ID de la receta
     try {
-      // configurar header's Content-Type como JSON
+      // Configurar el header 'Content-Type' como JSON
       const config = {
         baseURL: backendURL,
         headers: {
           "Content-Type": "application/json",
         },
       };
+
+      // Llamar al endpoint correcto con el prefijo "/recipebox"
       const response = await axios.post(
-        `/recipebox/delete/${laData.userID}/${laData.recipeID}`,
-        laData,
+        `${backendURL}/recipebox/delete/${userID}/${recipeID}`, // Aquí agregamos el prefijo
         config
       );
-      const {
-        data: { data },
-      } = response;
 
+      // Si la respuesta es exitosa, devolver el ID de la receta eliminada
       if (response.status === 201) {
-        return data;
+        return { recipeID }; // Devolver solo el recipeID para eliminarlo del estado
       }
+
+      return rejectWithValue("Error al eliminar la receta de favoritos");
     } catch (error: any) {
       console.log(error);
       if (axios.isAxiosError(error)) {

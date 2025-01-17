@@ -80,3 +80,25 @@ export const userLogout = createAsyncThunk(
     }
   }
 );
+
+export const getFavoriteRecipesByUser = createAsyncThunk(
+  "user/getFavoriteRecipesByUser",
+  async (userID: number, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(
+        `${backendURL}/recipe/getbyuser/${userID}`
+      );
+
+      if (response.status === 200) {
+        return response.data; // Retorna las recetas favoritas
+      }
+
+      return rejectWithValue("Error al obtener las recetas favoritas");
+    } catch (error: any) {
+      console.log(error);
+      return rejectWithValue(
+        error.response?.data || "Error al obtener las recetas favoritas"
+      );
+    }
+  }
+);

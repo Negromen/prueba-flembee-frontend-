@@ -5,6 +5,7 @@ import RecipeCard from "../components/RecipeCard";
 import Navbar from "../components/NavBar";
 import { RecipeBoxPayload } from "../store/favorites/types/RecipeBoxPayload"; // Tipo de Payload
 import { AnyAction } from "@reduxjs/toolkit";
+import { getFavoriteRecipesByUser } from "../store/user/thunks"; // Acción para obtener las recetas favoritas
 
 const Favorites = () => {
   const dispatch = useDispatch();
@@ -13,7 +14,6 @@ const Favorites = () => {
   const favoriteRecipes = useSelector(
     (state: any) => state.user.favoriteRecipes
   );
-
   const userID = useSelector((state: any) => state.user.id); // Accedemos correctamente al userID desde el estado global
 
   const [error, setError] = useState<string | null>(null);
@@ -27,17 +27,16 @@ const Favorites = () => {
       };
 
       // Dispatch del thunk para eliminar la receta
-      const response = await dispatch(
+      await dispatch(
         recipeboxDelete(recipeBoxPayload) as unknown as AnyAction
-      ); // Llamamos al thunk de eliminar receta de favoritos
+      ).unwrap();
 
-      // Verificar si la respuesta fue exitosa
-      if (response?.type === "/recipebox/delete/fulfilled") {
-        console.log("Receta eliminada de favoritos");
-      } else {
-        setError("Error al eliminar la receta de favoritos");
-      }
+      // Después de eliminar, obtener las recetas favoritas actualizadas
+      dispatch(getFavoriteRecipesByUser(userID) as unknown as AnyAction); // Este es el thunk que obtendría las recetas favoritas después de la eliminación
+
+      console.log("Receta eliminada de favoritos");
     } catch (error) {
+      console.error("Error al eliminar la receta de favoritos:", error);
       setError("Error al eliminar la receta de favoritos");
     }
   };
