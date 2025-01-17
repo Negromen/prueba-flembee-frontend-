@@ -50,7 +50,7 @@ export const recipeUpdate = createAsyncThunk(
           "Content-Type": "application/json",
         },
       };
-      const response = await axios.post(
+      const response = await axios.patch(
         `/recipe/update/${updateData.id}`,
         updateData,
         config

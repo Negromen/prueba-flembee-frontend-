@@ -1,6 +1,8 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { Provider } from "react-redux"; // Importa Provider de react-redux
+import { store } from "./store"; // Importa tu store configurado
 import { Suspense } from "react";
 import "./index.css"; // Estilos globales
 import { routes } from "./router/routes"; // Asegúrate de que routes es un array de rutas válido
@@ -18,6 +20,8 @@ const App = () => {
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
-    <App />
+    <Provider store={store}>
+      <App />
+    </Provider>
   </React.StrictMode>
 );

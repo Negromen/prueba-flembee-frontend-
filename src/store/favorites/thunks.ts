@@ -7,27 +7,31 @@ const backendURL = "http://localhost:5000";
 export const recipeboxRegister = createAsyncThunk(
   "/recipebox/create",
   async (payload: RecipeBoxPayload, { rejectWithValue }) => {
-    const { ...registerData } = payload;
+    const { userID, recipeID } = payload;
     try {
-      // configurar header's Content-Type como JSON
+      // Configurar header's Content-Type como JSON
       const config = {
         baseURL: backendURL,
         headers: {
           "Content-Type": "application/json",
         },
       };
-      const response = await axios.post(
-        "/recipebox/insert",
-        registerData,
+
+      // Primero, insertar en la tabla intermedia 'recipe_box'
+      await axios.post("/recipebox/insert", { userID, recipeID }, config);
+
+      // Luego, obtener la receta completa
+      const response = await axios.get(
+        `${backendURL}/recipe/getrecipe/${recipeID}`,
         config
       );
-      const {
-        data: { data },
-      } = response;
 
-      if (response.status === 201) {
-        return data;
+      // Retornar la receta completa
+      if (response.status === 200) {
+        return response.data; // Receta completa
       }
+
+      return rejectWithValue("Error al obtener la receta");
     } catch (error: any) {
       console.log(error);
       if (axios.isAxiosError(error)) {

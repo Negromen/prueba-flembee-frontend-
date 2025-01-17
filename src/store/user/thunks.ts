@@ -10,23 +10,21 @@ export const userLogin = createAsyncThunk(
   "/user/login",
   async ({ username, password }: UserLoginPayload, { rejectWithValue }) => {
     try {
-      // configurar header's Content-Type como JSON
       const config = {
         baseURL: backendURL,
         headers: {
           "Content-Type": "application/json",
         },
       };
+
       const response = await axios.post(
         "/user/login",
         { username, password },
         config
       );
-      const {
-        data: { data },
-      } = response;
 
-      return data;
+      // Asegúrate de que solo el token se pasa
+      return response.data.token; // Solo el token
     } catch (error: any) {
       console.log(error);
       if (axios.isAxiosError(error)) {
@@ -74,11 +72,8 @@ export const userLogout = createAsyncThunk(
   "user/logout",
   async (_, { rejectWithValue }) => {
     try {
-      // Si tienes una API para invalidar el token, puedes hacer la llamada aquí:
-      // await api.logout();
-
       // Respuesta exitosa con un mensaje y un código
-      return { message: "Logout successful", code: 200 };
+      return { message: "Logout successful", code: 200 }; // Aquí no usamos rejectWithValue
     } catch (error) {
       // Si ocurre un error, devuelve un mensaje de error y un código
       return rejectWithValue({ message: "Error during logout", code: 500 });
